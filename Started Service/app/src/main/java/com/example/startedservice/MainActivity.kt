@@ -16,6 +16,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -41,6 +45,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun StartServiceScreen(context: Context, modifier: Modifier = Modifier) {
+    val intent = Intent(context, StartedService::class.java)
+    var isActive by remember { mutableStateOf(false) }
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -49,8 +55,10 @@ fun StartServiceScreen(context: Context, modifier: Modifier = Modifier) {
         ) {
         Button(
             onClick = {
-                val intent = Intent(context, StartedService::class.java)
-                context.startService(intent)
+                if (!isActive) {
+                    context.startService(intent)
+                    isActive = !isActive
+                }
             }
         ) {
             Text(
@@ -60,13 +68,16 @@ fun StartServiceScreen(context: Context, modifier: Modifier = Modifier) {
 
 
         Spacer(
-            modifier = Modifier.height(16.dp,)
+            modifier = Modifier.height(16.dp)
         )
 
         Button(
             onClick = {
-                val intent = Intent(context, StartedService::class.java)
-                context.stopService(intent)
+                if (isActive) {
+                    context.stopService(intent)
+                    isActive = !isActive
+                }
+
             }
         ) {
             Text(
